@@ -4,12 +4,11 @@ python:
 
 install:
     - sudo apt-get install ninja-build
-
-before_script:
-    - pip install pytest
+    - pip install -e .
+    - python setup.py build build_ext sdist
 
 script:
-    - python setup.py build bdist_wheel sdist install && pip install -e . && ls pynng && pytest test
+    - pytest
 
 deploy:
     skip_cleanup: true

@@ -6,16 +6,18 @@ python:
 # Build steps taken from
 # https://github.com/nanomsg/nanomsg#build-it-with-cmake
 before_install:
-    sudo apt-get install ninja-build
+    - sudo apt-get install ninja-build
 
 install:
-  - python setup.py build && python setup.py bdist_wheel sdist && python setup.py develop
+    - python setup.py build && python setup.py bdist_wheel sdist && python setup.py develop
+    - ls pynng
 
 before_script:
     - pip install pytest
 
 script:
-    pytest test
+    - ls pynng
+    - pytest test
 
 deploy:
     skip_cleanup: true

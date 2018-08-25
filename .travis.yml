@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+# Build steps taken from
+# https://github.com/nanomsg/nanomsg#build-it-with-cmake
+install:
+  - python setup.py build bdist_wheel
+
+# command to run tests, e.g. python setup.py test
+script: LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib python setup.py test

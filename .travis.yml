@@ -9,6 +9,7 @@ before_install:
     - sudo apt-get install ninja-build
 
 install:
+    - pip install -e .
     - python setup.py build && python setup.py bdist_wheel sdist && python setup.py develop
     - ls pynng
 

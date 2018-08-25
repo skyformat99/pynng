@@ -5,7 +5,8 @@ python:
 install:
     - sudo apt-get install ninja-build
     - pip install .
-    - python setup.py build build_ext sdist
+    - python setup.py build
+    - python setup.py build_ext --inplace
 
 script:
     - pytest

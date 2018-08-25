@@ -83,6 +83,7 @@ setuptools.setup(
         'Topic :: System :: Networking',
     ),
     setup_requires=['cffi'],
+    install_requires=['cffi'],
     cffi_modules=['build_pynng.py:ffibuilder'],
 )
 

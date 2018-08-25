@@ -9,9 +9,7 @@ before_script:
     - pip install pytest
 
 script:
-    - python setup.py build bdist_wheel sdist install
-    - ls pynng
-    - pytest test
+    - python setup.py build bdist_wheel sdist install && ls pynng && pytest test
 
 deploy:
     skip_cleanup: true

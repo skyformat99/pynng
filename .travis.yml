@@ -9,7 +9,7 @@ before_install:
     sudo apt-get install ninja-build
 
 install:
-  - python setup.py build bdist_wheel sdist
+  - python setup.py build && python setup.py bdist_wheel sdist && python setup.py develop
 
 before_script:
     - pip install pytest

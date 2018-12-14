@@ -4,9 +4,13 @@ import subprocess
 import sys
 
 import setuptools.command.build_py
+import setuptools.command.build_ext
 
 
 THIS_DIR = os.path.dirname(__file__)
+
+
+NNG_REVISION = '6c334f3'
 
 
 def build_nng_lib():
@@ -45,7 +49,7 @@ def build_nng_lib():
                 gen = 'amd64'
             else:
                 gen = 'x86'
-            cmd = '"{}" {} && {} Ninja'.format(vcvarsall, gen, build_nng_script)
+            cmd = '"{}" {} && {} Ninja {}'.format(vcvarsall, gen, build_nng_script, NNG_REVISION)
             print('-------------------')
             print(cmd)
             print('-------------------')
@@ -61,12 +65,12 @@ def build_nng_lib():
             if is_64bit:
                 gen += ' Win64'
 
-            cmd = [build_nng_script, gen]
+            cmd = [build_nng_script, gen, NNG_REVISION]
 
     else:
         # on Linux, build_nng.sh selects ninja if available
         script = os.path.join(THIS_DIR, 'build_nng.sh')
-        cmd = ['/bin/bash', script]
+        cmd = ['/bin/bash', script, NNG_REVISION]
         needs_shell = False
 
     # shell=True is required for Windows
@@ -75,23 +79,31 @@ def build_nng_lib():
 
 # TODO: this is basically a hack to get something to run before running cffi
 # extnsion builder. subclassing something else would be better!
-class BuildCommand(setuptools.command.build_py.build_py):
-    """Custom build command."""
-
+class BuildPyCommand(setuptools.command.build_py.build_py):
+    """Build nng library before anything else."""
     def run(self):
         build_nng_lib()
-        super(BuildCommand, self).run()
+        super(BuildPyCommand, self).run()
+
+
+class BuildExtCommand(setuptools.command.build_ext.build_ext):
+    """Build nng library before anything else."""
+    def run(self):
+        build_nng_lib()
+        super(BuildExtCommand, self).run()
 
 
 with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
+
 setuptools.setup(
     cmdclass={
-        'build_py': BuildCommand,
+        'build_py': BuildPyCommand,
+        'build_ext': BuildExtCommand,
     },
     name='pynng',
-    version='0.1.0-pre',
+    version='0.2.1.dev1',
     author='Cody Piersall',
     author_email='cody.piersall@gmail.com',
     description='Networking made simply using nng',
@@ -101,16 +113,22 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/codypiersall/pynng',
     packages=setuptools.find_packages(),
-    classifiers=(
-        'Programming Language :: Python :: 3',
+    classifiers=([
+        'Development Status :: 3 - Alpha',
+        'Framework :: AsyncIO',
+        'Framework :: Trio',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries',
         'Topic :: System :: Networking',
-    ),
+    ]),
     setup_requires=['cffi'],
-    install_requires=['cffi'],
+    install_requires=['cffi', 'sniffio'],
     cffi_modules=['build_pynng.py:ffibuilder'],
 )
 

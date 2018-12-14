@@ -1,0 +1,10 @@
+include *.sh *.py *.bat 8.txt *.md
+include *.h
+recursive-include nng *
+recursive-include test *.py
+recursive-include pynng *.py
+prune nng/build
+prune nng/.git
+prune nng/.circleci
+exclude nng/.gitignore
+

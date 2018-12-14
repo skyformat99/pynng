@@ -7,20 +7,21 @@ if which ninja > /dev/null 2>/dev/null; then
     cmake_args=' -G Ninja '
 fi
 
-cmake_args="$cmake_args -DBUILD_SHARED_LIBS=on"
+cmake_args="$cmake_args"
 
 (
-    git submodule update --init &&
+    if [ ! -e nng ]; then
+        git clone https://github.com/nanomsg/nng
+        (
+        cd nng
+        git checkout "$1"
+        )
+    fi
     cd nng &&
     rm -rf build &&
     mkdir build &&
     cd build &&
-    # intentionally not putting cmake_args in quotes!
-    cmake $cmake_args .. &&
-    cmake --build . &&
-    # we built a shared library, but we actually didn't want a shared library,
-    # we just wanted the position independent code compile option on all the
-    # object files.  Now we're going to build the archive we link with.
-    ar rcs libnng.a $(find src -name '*.o')
+    CFLAGS=-fPIC cmake $cmake_args .. &&
+    CFLAGS=-fPIC cmake --build .
 
 )
